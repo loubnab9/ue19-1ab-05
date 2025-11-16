@@ -37,7 +37,25 @@ jobs:
           tags: |
             type=sha,prefix=,suffix=,format=short
             type=raw,value=latest,enable={{is_default_branch}}
+      - name: Build Docker image (for Trivy scan)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:trivy_scan
+          load: true # Charge l'image localement pour le scan
 
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:trivy_scan'
+          format: 'table'
+          exit-code: '0' 
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'HIGH,CRITICAL'
+
+
+ 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
