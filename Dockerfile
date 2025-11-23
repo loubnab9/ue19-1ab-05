@@ -1,5 +1,5 @@
 # Utilise une image de base officielle de Python, légère
-FROM python:3.11-slim
+FROM python:3.7-slim-buster
 
 # Définit le répertoire de travail dans le conteneur
 WORKDIR /app
